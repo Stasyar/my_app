@@ -1,0 +1,15 @@
+<html>
+  <head>
+    {% if title %}
+    <title>{{title}} - my app</title>
+    {% else %}
+    <title>my app</title>
+    {% endif %}
+  </head>
+  <body>
+    <h1>Hi, {{user.nickname}}!</h1>
+    {% for post in posts %}
+    <p>{{post.author.nickname}} says: <b>{{post.body}}</b></p>
+    {% endfor %}
+  </body>
+</html>
