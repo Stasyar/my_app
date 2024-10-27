@@ -1,28 +1,20 @@
 from flask import render_template, flash, redirect, url_for
+from flask_login import login_required, current_user, login_user
 from werkzeug.security import check_password_hash
 
-from app import app
+from app import app, login_manager
 from app.forms import RegistrationForm, LoginForm
 from app.models import db, User
 
 
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+
 @app.route('/')
 def index():
-    user = {'nickname': 'Miguel'}
-    posts = [
-        {
-            'author': {'nickname': 'John'},
-            'body': 'Beautiful day in Portland!'
-        },
-        {
-            'author': {'nickname': 'Susan'},
-            'body': 'The Avengers movie was so cool!'
-        }
-    ]
-    return render_template("index.html",
-                           title='Home',
-                           user=user,
-                           posts=posts)
+    return render_template("index.html")
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -54,9 +46,16 @@ def login():
 
         user = User.query.filter_by(username=username).first()
         if user and user.check_password(password):
+            login_user(user)
             flash('Logged in successfully!')
-            return redirect(url_for('index'))
+            return redirect(url_for('profile'))
         else:
             flash('Invalid username or password')
 
     return render_template('login.html', form=form)
+
+
+@app.route('/profile')
+@login_required
+def profile():
+    return f'Welcome, {current_user.username}!'

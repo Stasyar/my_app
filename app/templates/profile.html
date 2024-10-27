@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Профиль</title>
+</head>
+<body>
+    <h1>Профиль пользователя {{ current_user.username }}</h1>
+
+    {% if profile %}
+        <p><strong>Биография:</strong> {{ profile.bio }}</p>
+        <!-- Вы можете добавить другие поля профиля, если нужно -->
+    {% else %}
+        <p>Профиль не заполнен.</p>
+    {% endif %}
+
+    <a href="{{ url_for('edit_profile') }}">Редактировать профиль</a>
+</body>
+</html>
