@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .user-list {
+            list-style-type: none;
+            padding: 0;
+            max-width: 600px;
+            margin: auto;
+        }
+        .user-item {
+            background: white;
+            border: 1px solid #ddd;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            transition: box-shadow 0.3s ease;
+        }
+        .user-item:hover {
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .user-item h2 {
+            margin: 0;
+            font-size: 1.5em;
+            color: #007bff;
+        }
+        .user-item p {
+            margin: 5px 0;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h1>Home</h1>
+    <ul class="user-list">
+        {% for user in users %}
+        <li class="user-item">
+            <h2>{{ user.username }}</h2>
+            <p>User ID: {{ user.id }}</p>
+            <a href="{{ url_for('user_profile', user_id=user.id) }}">View Profile</a>
+        </li>
+        {% else %}
+        <li>No users found.</li>
+        {% endfor %}
+
+        <a href="{{ url_for('profile') }}" class="home-button">Back to profile</a>
+    </ul>
+</body>
+</html>
+

@@ -4,22 +4,118 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ user.username }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #4a4a4a;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .profile-header img {
+            border-radius: 50%;
+            width: 100px;
+            height: 100px;
+            margin-right: 20px;
+        }
+        .profile-info {
+            flex: 1;
+        }
+        .bio {
+            font-style: italic;
+            color: #555;
+            margin: 10px 0;
+        }
+        .button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .edit-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: #007bff;
+            text-decoration: none;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .edit-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function addFriend(friendId) {
+            fetch(`/add_friend/${friendId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'  // Используйте CSRF-токен, если он у вас настроен
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </head>
 <body>
-    <h1>{{ user.username }}</h1>
-    <h2>Your Profile</h2>
+    <div class="container">
+        <div class="profile-header">
+            {% if profile.photo %}
+                <img src="{{ url_for('static', filename=profile.photo) }}" alt="Profile Photo">
+            {% else %}
+                <img src="{{ url_for('static', filename='default_avatar.png') }}" alt="Default Profile Photo">
+            {% endif %}
+            <div class="profile-info">
+                <h1>{{ user.username }}</h1>
+                <p class="bio">{{ profile.bio }}</p>
+                <p><strong>Age:</strong> {{ profile.age }}</p>
 
-    <!-- Отображение фотографии профиля -->
-    {% if profile.photo %}
-        <img src="{{ url_for('static', filename=profile.photo) }}" alt="Profile Photo" width="150">
-    {% else %}
-        <p>No profile photo available</p>
-    {% endif %}
+                {% if current_user.id == user.id %}
+                    <!-- Кнопки для владельца профиля -->
+                    <a class="edit-link" href="{{ url_for('edit_profile') }}">Edit Profile</a>
+                    <a class="edit-link" href="{{ url_for('notifications') }}">Notifications</a>
+                    <a class="edit-link" href="{{ url_for('friends') }}">Friends</a>
+                {% else %}
+                    <!-- Кнопка "Add Friend" для чужого профиля -->
+                    <button class="button" onclick="addFriend({{ user.id }})">Add Friend</button>
+                {% endif %}
+            </div>
+        </div>
 
-    <p><strong>Bio:</strong> {{ profile.bio }}</p>
-    <p><strong>Age:</strong> {{ profile.age }}</p>
-
-    <!-- Кнопка для редактирования профиля -->
-    <a href="{{ url_for('edit_profile') }}">Edit Profile</a>
+        <a class="edit-link" href="{{ url_for('home') }}">Back to Home</a>  <!-- Ссылка на домашнюю страницу -->
+    </div>
 </body>
 </html>
